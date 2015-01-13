@@ -1,0 +1,3 @@
+#!/bin/sh
+# this imports all URLs from a firefox bookmark json export, to wallabag with tag 'bookmarks'
+bookmarksJsonParse "$1" | xargs wallabag -t bookmarks

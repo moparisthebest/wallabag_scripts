@@ -1,0 +1,3 @@
+#!/bin/sh
+# this spits out URLs from a firefox bookmark json export, rather ugly...
+python -m json.tool < "$1" | grep '^ *"uri": *"' | sed -e 's/^ *"uri": *"//' -e 's/"$//'

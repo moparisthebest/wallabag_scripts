@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# put your login credentials in ~/.netrc
+# put your url here, or export wallabag_url in your .bashrc or something
+#wallabag_url="https://example.org/wallabag/"
+
+tags=''
+if [ "$1" = '--tags' ] || [ "$1" = '-t' ]
+then
+  shift
+  tags="&tags=$1"
+  shift
+fi
+
+cookies="$(mktemp)"
+trap 'rm -f "$cookies"' EXIT
+
+# login
+curl --netrc --cookie-jar "$cookies" "$wallabag_url" &>/dev/null || exit $?
+
+while [[ $# > 0 ]]
+do
+  url="$1"
+  b64="$(echo -n "$url" | base64 --wrap=0)"
+  full_url="$wallabag_url?action=add$tags&url=$b64"
+  #echo "url: $url b64: $b64 full_url: $full_url"
+
+  curl --netrc --cookie "$cookies" "$full_url" &>/dev/null || exit $?
+
+  shift
+done
